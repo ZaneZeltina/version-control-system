@@ -1,0 +1,69 @@
+====================================================================================================
+01. VERSIJU KONTROLES SISTĒMU (VCS) PĀRSKATS
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Versiju kontroles sistēma (Version Control System jeb VCS) ir programmatūras rīks, kas reģistrē visas failu un koda
+izmaiņas laika gaitā. Tā darbojas kā "laika mašīna" projektam — jebkurā brīdī iespējams apskatīt, kā kods izskatījās
+vakar, pirms mēneša vai pirms gada, un droši atgriezties pie jebkuras iepriekšējās darba versijas.
+
+
+1. KĀPĒC UN KAM TIEK IZMANTOTA VCS:
+----------------------------------------------------------------------------------------------------
+• Pilna projekta vēsture: Vienmēr ir precīzi zināms — kurš, ko, kad un kāpēc kodā ir mainījis.
+• Drošība un brīvība eksperimentēt: Jaunu funkciju izstrāde ir droša — ja kaut kas noiet greizi, ar vienu komandu var atgriezties pie iepriekšējā strādājošā stāvokļa.
+• Efektīvs komandas darbs: Vairāki izstrādātāji var paralēli strādāt pie viena projekta, nepārrakstot viens otra paveikto un ērti apvienojot koda izmaiņas.
+• Kur to izmanto ikdienā:
+  - Programmatūras, mobilo lietotņu un tīmekļa vietņu kodā (HTML, CSS, JavaScript, Python u.c.).
+  - Projekta konfigurācijas failos un vides iestatījumos.
+  - Dokumentācijā, tehniskajos aprakstos un teksta materiālos.
+
+
+2. VERSIJU KONTROLES SISTĒMU VEIDI:
+----------------------------------------------------------------------------------------------------
+• 1. Lokālās sistēmas (Local VCS):
+  Visi vēstures ieraksti glabājas tikai konkrētajā lietotāja datorā (piemēram, RCS).
+  Galvenais trūkums: ja sabojājas cietais disks vai dators, visa projekta vēsture tiek neatgriezeniski zaudēta.
+
+• 2. Centralizētās sistēmas (Centralized VCS):
+  Visa koda vēsture glabājas vienā centrālajā serverī (piemēram, SVN, CVS). Izstrādātāji lejupielādē tikai nepieciešamo failu jaunākās versijas.
+  Galvenais trūkums: bez interneta savienojuma nav iespējams saglabāt versijas, un centrālā servera atteices gadījumā darbs pilnībā apstājas.
+
+• 3. Sadalītās jeb decentralizētās sistēmas (Distributed VCS) — MŪSDIENU STANDARTS:
+  Katram izstrādātājam savā datorā ir pilna projekta un visas tā vēstures lokāla kopija (piemēram, Git, Mercurial).
+  Galvenās priekšrocības:
+  + Pilnvērtīgs darbs bez interneta savienojuma (offline režīmā).
+  + Zibenīgs visu ikdienas darbību izpildes ātrums.
+  + Augstākā drošība: pat ja attālinātais serveris kļūst nepieejams, pilna vēsture saglabājas katra komandas dalībnieka datorā.
+
+
+3. IEVADA KOMANDAS PĀRBAUDEI:
+----------------------------------------------------------------------------------------------------
+# Pārbaudīt, vai Git ir instalēts sistēmā un kāda ir tā versija:
+git --version
+
+# Atvērt Git iebūvēto palīdzības rokasgrāmatu:
+git --help
+
+
+4. PRAKTISKS PIEMĒRS NO DZĪVES:
+----------------------------------------------------------------------------------------------------
+Iedomājies situāciju bez VCS — faili bieži tiek saglabāti haotiski:
+  projekts.html
+  projekts_final.html
+  projekts_final_LABOTS.html
+  projekts_final_GALĪGAIS_v2.html
+
+Izmantojot Git (VCS), projektā vienmēr ir tikai viens tīrs fails "projekts.html", kamēr Git fonā precīzi saglabā katru
+fiksēto izmaiņu (commit) ar skaidru aprakstu par to, kas tieši un kāpēc tika paveikts.
+
+
+5. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Padoms: Projektos vienmēr izmanto decentralizēto VCS (Git) — tas ir pasaules industrijas standarts.
+• Kļūda: Uzskatīt, ka Git un GitHub ir viens un tas pats:
+  - Git ir lokāla programma (versiju kontroles dzinējs), kas darbojas tavā datorā.
+  - GitHub ir tiešsaistes mākoņpakalpojums, kur glabāt savus Git projektus, veidot rezerves kopijas un sadarboties ar kolēģiem.
+
+====================================================================================================
