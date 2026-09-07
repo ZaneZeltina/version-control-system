@@ -1,0 +1,85 @@
+====================================================================================================
+02. GIT UZSTĀDĪŠANA UN SĀKOTNĒJĀ KONFIGURĀCIJA
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Pēc Git instalēšanas pats pirmais un svarīgākais solis ir norādīt savu vārdu un e-pastu. Šī informācija tiks automātiski pievienota katrai tevis veiktajai izmaiņu fiksācijai (commit), lai komandas biedri un sistēma vienmēr zinātu, kurš ir konkrēto koda rindiņu autors.
+
+
+1. INSTALĀCIJAS PĀRBAUDE UN PALĪDZĪBA:
+----------------------------------------------------------------------------------------------------
+# Pārbaudīt, vai Git ir pieejams un kāda versija ir instalēta:
+git --version
+
+# Apskatīt īsu komandu kopsavilkumu un populārākās opcijas:
+git -h
+
+# Atvērt pilnu un detalizētu Git dokumentāciju pārlūkā vai terminālī:
+git --help
+
+
+2. GLOBĀLIE IESTATĪJUMI (VISIEM PROJEKTIEM TAVĀ DATORĀ):
+----------------------------------------------------------------------------------------------------
+Globālie iestatījumi tiek saglabāti lietotāja mājas mapē esošajā failā (~/.gitconfig) un attiecas uz visiem projektiem pēc noklusējuma.
+
+# Iestatīt savu vārdu un uzvārdu:
+git config --global user.name "Tavs Vārds Uzvārds"
+
+# Iestatīt savu e-pasta adresi (ieteicams lietot to pašu, kas GitHub kontā):
+git config --global user.email "tavs_epasts@example.com"
+
+# Ieslēgt krāsainu un viegli lasāmu termināļa izvadi:
+git config --global color.ui true
+
+# Ieteicams: iestatīt galvenā zara noklusēto nosaukumu kā "main":
+git config --global init.defaultBranch main
+
+
+3. LOKĀLIE IESTATĪJUMI (TIKAI KONKRĒTAM PROJEKTAM):
+----------------------------------------------------------------------------------------------------
+Lokālie iestatījumi tiek glabāti konkrētā projekta mapē (.git/config). Tie pārraksta un aizstāj globālos iestatījumus tikai šim vienam projektam.
+
+# Iestatīt lokālu vārdu konkrētajam projektam (jāizpilda projekta mapē):
+git config user.name "Darba Vārds"
+
+# Iestatīt atsevišķu darba e-pastu konkrētajam projektam:
+git config user.email "darba_epasts@uznemums.lv"
+
+
+4. IESTATĪJUMU PĀRBAUDE UN PĀRSKATS:
+----------------------------------------------------------------------------------------------------
+# Pārbaudīt aktīvo globālo vārdu un e-pastu:
+git config --global user.name
+git config --global user.email
+
+# Pārbaudīt konkrētā projekta lokālos iestatījumus:
+git config user.name
+git config user.email
+
+# Parādīt pilnu visu aktīvo iestatījumu sarakstu un to atrašanās vietas:
+git config --list --show-origin
+
+
+5. PRAKTISKS SOLIS-PA-SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Solis 1: Tikko uzinstalēji Git jaunā datorā.
+Solis 2: Atver termināli un ievadi savus datus vienreiz visiem nākotnes projektiem:
+         git config --global user.name "Jānis Bērziņš"
+         git config --global user.email "janis.berzins@gmail.com"
+Solis 3: Pārliecinies, ka dati ir saglabāti pareizi:
+         git config --list
+Solis 4: Ja sāc strādāt pie uzņēmuma projekta un nepieciešams uzņēmuma e-pasts:
+         Atver darba projekta mapi un ieraksti:
+         git config user.email "janis@mana-kompanija.lv"
+         (Visi pārējie projekti joprojām izmantos tavu personīgo e-pastu).
+
+
+6. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Padoms (Vienreizēja konfigurācija): Globālos iestatījumus pietiek nokonfigurēt tikai vienu reizi pēc Git instalēšanas.
+• Padoms (GitHub savietojamība): Izmanto to pašu e-pasta adresi, ar kuru esi reģistrējies GitHub/GitLab, lai tavi veiktie komiti automātiski piesaistītos tavam profilam un statistikai.
+• Kļūda (Pēdiņu aizmirstība): Ja vārdā ir atstarpes (piemēram, "Jānis Bērziņš"), vienmēr liec vārdu pēdiņās, pretējā gadījumā Git uztvers tikai pirmo vārdu.
+• Kļūda (Sajaukti līmeņi): Neizmanto `--global` karogu, ja vēlies mainīt e-pastu tikai vienam darba projektam.
+
+====================================================================================================
