@@ -1,0 +1,102 @@
+====================================================================================================
+03. PIRMĀ GIT REPOZITORIJA IZVEIDOŠANA (GIT INIT)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Komanda `git init` pārvērš parastu datora mapi par pilnvērtīgu Git repozitoriju (repository). Šīs komandas izpildes
+rezultātā mapē tiek izveidota slēptā sistēmas mape ar nosaukumu `.git`. Tieši šajā mapē Git turpmāk glabā visu projekta
+vēsturi, iestatījumus, izmaiņu fiksācijas (commits) un zarus (branches). Kamēr mape `.git` pastāv, Git uzrauga un spēj
+sekot līdzi visām failu izmaiņām šajā projektā.
+
+
+1. TERMINĀĻA PAMATKOMANDAS NAVIGĀCIJAI UN DARBAM AR MAPĒM:
+----------------------------------------------------------------------------------------------------
+Lai ērti strādātu ar Git terminālī (macOS/Linux terminālī vai Windows Git Bash), tiek izmantotas standarta Unix
+navigācijas komandas:
+
+# Izveidot jaunu mapi ar nosaukumu 'mans_projekts':
+mkdir mans-projekts
+
+# Pāriet uz izveidoto mapi (Change Directory):
+cd mans-projekts
+
+# Parādīt pašreizējās mapes pilno atrašanās ceļu (Print Working Directory):
+pwd
+
+# Parādīt mapes saturu (failus un apakšmapes):
+ls
+
+# Parādīt detalizētu sarakstu, ieskaitot slēptos failus un mapes (piem., .git):
+ls -la
+
+# Atgriezties vienu līmeni augstāk (iepriekšējā vecāka mapē):
+cd ..
+
+# Atgriezties uz iepriekšējo atrašanās vietu, kurā tikko biji:
+cd -
+
+# Pāriet uz sava lietotāja mājas mapi (Home directory):
+cd ~
+
+
+2. GALVENĀS REPOZITORIJA INICIALIZĒŠANAS UN IESTATĪJUMU KOMANDAS:
+----------------------------------------------------------------------------------------------------
+# GALVENĀ KOMANDA: Inicializēt jaunu Git repozitoriju pašreizējā mapē:
+git init
+
+# Ielūkoties Git iekšējā konfigurācijas failā (atrodas .git mapē):
+cat .git/config
+
+# Iestatīt lokālu lietotāja vārdu TIKAI šim konkrētajam projektam:
+git config user.name "ZaneZeltina"
+
+# Pārbaudīt aktīvo lokālo vai globālo vārdu:
+git config user.name
+git config --global user.name
+
+# Parādīt visus aktīvos konfigurācijas iestatījumus:
+git config --list
+
+# Parādīt tikai šī projekta lokālos iestatījumus:
+git config --local --list
+
+# Parādīt vispārējos globālos iestatījumus:
+git config --global --list
+
+
+3. PRAKTISKS SOLIS-PA-SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Solis 1: Izveido jaunu mapi savam pirmajam projektam un ieej tajā:
+         mkdir pirmais_projekts
+         cd pirmais-projekts
+
+Solis 2: Pārbaudi, vai pašlaik mape ir tukša:
+         pwd
+         ls -la
+
+Solis 3: Pārvērt šo mapi par Git repozitoriju:
+         git init
+         (Terminālī redzēsi paziņojumu: "Initialized empty Git repository in .../.git/")
+
+Solis 4: Pārliecinies, ka Git ir izveidojis slēpto mapi:
+         ls -la
+         (Sarakstā parādīsies mape `.git`)
+
+Solis 5: Ja šim projektam nepieciešams cits vārds vai e-pasts, nekā globālajos iestatījumos, iestati to lokāli:
+         git config user.name "Mans Projekta Vārds"
+         git config user.email "projekts@piemers.lv"
+
+
+4. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Padoms (Kur izpildīt komandu): Komanda `git init` ir jāizpilda tikai VIENU reizi pašā projekta sākumā un tieši
+projekta saknes mapē (root folder).
+• Padoms (Windows lietotājiem): Windows vidē standarta `Command Prompt (cmd)` vietā vienmēr izmanto `Git Bash` vai
+integrēto termināli WebStorm/VS Code, lai darbotos visas standarta komandas (`ls`, `pwd`, `cat`).
+• Kļūda (Neveidot repozitoriju repozitorijā): Nekad neizpildi `git init` mapē, kas jau atrodas citas Git mapes iekšienē,
+vai savā galvenajā lietotāja mapē (piem., `C:/Users/Vards` vai `~`), pretējā gadījumā Git mēģinās izsekot visam tavam datoram.
+• Kļūda (Neaiztikt .git mapi manuāli): Mapi `.git` nekad nevajag manuāli dzēst, pārdēvēt vai labot tajā esošos failus,
+ja vien precīzi nezini, ko dari — tajā glabājas visa projekta vēsture. Ja vēlies pilnībā noņemt Git no projekta, pietiek vienkārši izdzēst šo `.git` mapi.
+
+====================================================================================================
