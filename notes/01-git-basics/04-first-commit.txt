@@ -1,0 +1,78 @@
+====================================================================================================
+04. PIRMĀ IZMAIŅU FIKSĀCIJA (GIT ADD UN GIT COMMIT)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Git izmaiņu saglabāšanas process notiek trīs galvenajos posmos:
+1. Darba mape (Working Directory): Faila izveide vai labošana koda redaktorā.
+2. Sagatavošanas zona (Staging Area jeb Index): Izmaiņu atlasīšana ar komandu `git add`, sagatavojot tās fiksēšanai.
+3. Repozitorijs (Repository): Izmaiņu neatgriezeniska saglabāšana projekta vēsturē ar komandu `git commit`.
+
+Komanda `git commit` izveido projekta stāvokļa "momentuzņēmumu" (snapshot). Katram komitam ir unikāls identifikators
+(hash), autors, izveides laiks un precīzs ziņojums par to, kas tika paveikts.
+
+
+1. GALVENĀS KOMANDAS STĀVOKĻA PĀRBAUDEI UN FIKSĒŠANAI:
+----------------------------------------------------------------------------------------------------
+# Pārbaudīt repozitorija un failu stāvokli (kurus failus Git redz, kuri ir sagatavoti, kuri nav):
+git status
+
+# Pievienot konkrētu failu sagatavošanas zonai (Staging Area):
+git add fails.html
+
+# Pievienot VISUS labotos un jaunos failus pašreizējā mapē sagatavošanas zonai:
+git add .
+
+# Izveidot komitu ar paskaidrojošu ziņojumu vienā rindā (visbiežāk lietotais veids):
+git commit -m "Pievienota sākumlapas struktūra"
+
+# Izveidot komitu, atverot teksta redaktoru detalizēta ziņojuma ievadei:
+git commit
+
+# Apskatīt visu komitu vēsturi hronoloģiskā secībā:
+git log
+
+# Apskatīt komitu vēsturi kompaktā vienas rindiņas formātā:
+git log --oneline
+
+# Iestatīt noklusēto teksta redaktoru komitu ziņojumiem terminālī (piemēram, nano vai code):
+git config --global core.editor "nano"
+
+
+2. PRAKTISKS SOLIS-PA-SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Solis 1: Izveido pirmo projekta failu (piemēram, `index.html`) un ieraksti tajā kodu.
+
+Solis 2: Pārbaudi, ko redz Git:
+         git status
+         (Fails parādīsies sarkanā krāsā sadaļā "Untracked files" — Git redz jaunu failu, bet vēl to neuzrauga).
+
+Solis 3: Pievieno failu sagatavošanas zonai:
+         git add index.html
+
+Solis 4: Vēlreiz pārbaudi stāvokli:
+         git status
+         (Fails tagad ir zaļā krāsā sadaļā "Changes to be committed" — tas ir gatavs saglabāšanai).
+
+Solis 5: Fiksē izmaiņas vēsturē ar skaidru ziņojumu:
+         git commit -m "Initial commit: izveidots index.html fails"
+
+Solis 6: Pārliecinies, ka komits ir veiksmīgi saglabāts projekta vēsturē:
+         git log --oneline
+         (Redzēsi sava komita unikālo ID un ievadīto ziņojumu).
+
+
+3. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Padoms (Vienmēr raksti skaidrus ziņojumus): Komita ziņojumam (`-m "..."`) jābūt īsam un saprotamam. Laba prakse ir
+rakstīt darbības vārdā tagadnē vai pagātnē (piem., "Pievienota kontaktu forma" vai "Fix: novērsta pogas kļūda"), nevis
+bezjēdzīgus tekstus kā "update", "labojumi" vai "asdasd".
+• Padoms (Regulāri komiti): Veic komitus bieži — pēc katras pabeigtas loģiskas vienības vai funkcijas, nevis reizi
+nedēļā ar tūkstošiem labojumu vienā kaudzē.
+• Kļūda (Aizmirsts git add): Mēģinot izpildīt `git commit` bez iepriekšēja `git add`, Git paziņos, ka nav nekā ko fiksēt
+("nothing to commit").
+• Kļūda (Iestrēgšana Vim redaktorā): Ja nejauši ievadīji `git commit` bez `-m` karoga un atvērās nesaprotams termināļa
+logs (Vim), lai izietu: nospied `Esc`, ievadi `:q!` un nospied `Enter`.
+
+====================================================================================================
