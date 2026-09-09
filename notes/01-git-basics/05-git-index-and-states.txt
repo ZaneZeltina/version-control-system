@@ -1,0 +1,82 @@
+====================================================================================================
+05. GIT INDEKSS UN FAILU STĀVOKĻI (STAGING AREA & FILE STATES)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Git indekss (pazīstams arī kā "Staging Area" jeb sagatavošanas zona) ir starpposms starp tavu darba mapi un projekta
+vēsturi. Tas darbojas kā "iepirkumu grozs" pirms kases — tu vari brīvi strādāt pie vairākiem failiem, bet indeksā ielikt
+tikai tās izmaiņas, kuras vēlies iekļaut nākamajā fiksācijā (commit). Tas ļauj veidot tīrus, loģiski sadalītus un
+pārskatāmus komitus.
+
+
+1. FAILU ČETRI GALVENIE STĀVOKĻI (FILE LIFECYCLE):
+----------------------------------------------------------------------------------------------------
+Katrs fails Git projektā vienmēr atrodas vienā no šiem četriem stāvokļiem:
+
+• 1. Neizsekots (Untracked):
+
+  Jauns fails, kas izveidots darba mapē, bet Git to vēl nepazīst un neuzrauga.
+  `git status` rāda šo failu sarkanā krāsā sadaļā "Untracked files".
+
+• 2. Sagatavots (Staged):
+  Fails (vai tā konkrētas izmaiņas) ir pievienots indeksam ar komandu `git add` un ir gatavs iekļaušanai nākamajā komitā.
+  `git status` rāda šo failu zaļā krāsā sadaļā "Changes to be committed".
+
+• 3. Nemainīts (Unmodified):
+  Fails jau ir piefiksēts iepriekšējā komitā, un kopš tā laika tajā nekas nav mainīts.
+  Šāds fails `git status` izvadē netiek īpaši izcelts, jo izmaiņu nav.
+
+• 4. Mainīts (Modified):
+  Fails, kas jau tiek izsekots, ir labots koda redaktorā, taču jaunās izmaiņas VĒL NAV pievienotas indeksam ar `git add`.
+  `git status` rāda šo failu sarkanā krāsā sadaļā "Changes not staged for commit".
+
+
+2. KOMANDAS DARBAM AR INDEKSU UN STĀVOKĻIEM:
+----------------------------------------------------------------------------------------------------
+# Pārbaudīt visu failu pašreizējos stāvokļus projektā:
+git status
+
+# Īss stāvokļa pārskats (ar burtiem '??' Untracked, 'M' Modified, 'A' Added):
+git status -s
+
+# Pārvietot failu uz "Staged" stāvokli (pievienot indeksam):
+git add fails.js
+
+# Pārvietot visus mainītos un jaunos failus uz "Staged" stāvokli:
+git add .
+
+# Izņemt failu no indeksa atpakaļ uz "Modified" stāvokli (neatceļot koda izmaiņas failā):
+git restore --staged fails.js
+
+# BĪSTAMA KOMANDA: Atcelt VISAS nesaglabātās izmaiņas darba mapē un indeksā, 
+# atgriežot projektu precīzā pēdējā komita stāvoklī:
+git reset --hard
+
+
+3. PRAKTISKS SOLIS-PA-SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Solis 1: Izveido jaunu failu `style.css` (stāvoklis: Untracked).
+Solis 2: Pievieno to indeksam:
+         git add style.css
+         (stāvoklis mainās uz: Staged).
+Solis 3: Veic komitu:
+         git commit -m "Pievienots style.css"
+         (stāvoklis kļūst: Unmodified — fails ir saglabāts).
+Solis 4: Atver `style.css` un pievieno jaunas krāsas (stāvoklis mainās uz: Modified).
+Solis 5: Izpildi `git add style.css` un pēc tam `git commit -m "Atjaunota krāsu palete"` (atgriežas uz: Unmodified).
+
+
+4. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Padoms (Selektīvā komitošana): Izmanto indeksu, lai sadalītu darbu. Ja esi labojis 3 dažādas lapas daļas, ar `git add
+fails1.html` un `git commit` piefiksē katru loģisko daļu atsevišķi, nevis visu vienā putrā.
+• Padoms (Pārbaude pirms fiksēšanas): Pirms katra `git commit` vienmēr izpildi `git status`, lai pārliecinātos, ka
+zaļajā zonā (Staged) atrodas tieši tie faili, kurus patiešām vēlies saglabāt.
+• Kļūda (Izmaiņas pēc git add): Ja pēc `git add fails.js` tu turpini labot šo failu redaktorā, jaunās izmaiņas nebūs
+indeksā! Fails vienlaikus būs gan "Staged" (ar vecākām izmaiņām), gan "Modified" (ar svaigākajām). Lai iekļautu visu,
+jāizpilda `git add fails.js` atkārtoti.
+• Brīdinājums (git reset --hard risks): Komanda `git reset --hard` pilnībā izdzēš visas koda izmaiņas, kas nav
+piefiksētas ar `git commit`. Izmanto to tikai tad, ja esi 100% pārliecināts, ka iesāktais darbs vairs nav vajadzīgs.
+
+====================================================================================================
