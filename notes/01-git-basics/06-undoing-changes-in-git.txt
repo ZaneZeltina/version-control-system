@@ -1,0 +1,102 @@
+====================================================================================================
+06. IZMAIŅU ATCELŠANA UN ATKĀPŠANĀS (GIT RESET UN GIT REVERT)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Git piedāvā divus galvenos veidus, kā atcelt nevēlamas izmaiņas vai kļūdainus komitus:
+
+1. `git reset` (Vēstures pārrakstīšana):
+   Pārvieto projekta pašreizējo rādītāju (HEAD) atpakaļ uz norādīto komitu. Iepriekšējie komiti tiek "nodzēsti" no
+   redzamās vēstures. Piemērots TIKAI lokālam darbam, pirms izmaiņas nosūtītas citiem (push).
+
+2. `git revert` (Droša atcelšana ar jaunu komitu):
+   Izveido PILNĪGI JAUNU komitu, kas izdara pretējas darbības norādītajam komitam (ja bija pievienots kods — to izdzēš;
+   ja izdzēsts — atjauno). Vēsture netiek dzēsta, tāpēc šī ir vienīgā drošā metode kopīgam darbam (GitHub/GitLab).
+
+
+1. DAĻA: KOMANDA `GIT RESET` (LOKĀLĀS VĒSTURES ATCELŠANA):
+----------------------------------------------------------------------------------------------------
+# Noņemt visus failus no indeksa (Staging Area), bet saglabāt visas koda izmaiņas darba mapē:
+git reset
+
+# Noņemt konkrētu failu no indeksa:
+git reset faila_nosaukums.html
+
+# Atcelt pēdējo komitu (HEAD~1 jeb HEAD^), bet saglabāt visas tā izmaiņas darba mapē:
+git reset HEAD~1
+
+# Atcelt pēdējos 2 komitus (HEAD~2 jeb HEAD^^), saglabājot izmaiņas darba mapē:
+git reset HEAD~2
+
+# Atcelt pēdējos 3 komitus (HEAD~3 jeb HEAD^^^), saglabājot izmaiņas darba mapē:
+git reset HEAD~3
+
+# BĪSTAMI: Atcelt pēdējo komitu un PILNĪBĀ IZDZĒST visas tā izmaiņas (atgriezt kodu tīrā stāvoklī):
+git reset --hard HEAD~1
+
+# BĪSTAMI: Atcelt pēdējos 2 komitus, pilnībā izdzēšot to saturu no datora:
+git reset HEAD~2 --hard
+
+# Atgriezties pie konkrēta komita pēc tā ID (dzēšot visas pēc tam veiktās izmaiņas):
+git reset --hard a1b2c3d
+
+# Glābšanas riņķis: atgriezties pie stāvokļa, kas bija pirms pēdējā bīstamā reset izpildes:
+git reset --hard ORIG_HEAD
+
+
+2. DAĻA: KOMANDA `GIT REVERT` (DROŠA ATCELŠANA PUBLISKIEM PROJEKTIEM):
+----------------------------------------------------------------------------------------------------
+# Parādīt pēdējā komita detaļas un tajā veiktās izmaiņas:
+git show
+
+# Atcelt pēdējo komitu, izveidojot jaunu "pretējo" komitu (atvērs teksta redaktoru ziņojumam):
+git revert HEAD
+
+# Atcelt pēdējo komitu bez redaktora atvēršanas (automātisks ziņojums "Revert ..."):
+git revert HEAD --no-edit
+
+# Atcelt konkrētu vēstures komitu pēc tā unikālā hash koda:
+git revert 8ab14c
+
+# Atcelt trešo komitu no beigām (HEAD~3):
+git revert HEAD~3
+
+# Atcelt komitu virkni no viena punkta līdz otram:
+git revert 9e59768..4b2413e
+
+# Atcelt komita izmaiņas, bet NEVEIDOT jaunu komitu uzreiz (ielikt izmaiņas indeksā labošanai):
+git revert 9e59768 --no-commit
+
+# Atcelt nepabeigtu/iekavētu revert procesu konfliktu gadījumā:
+git revert --abort
+
+
+3. PRAKTISKS SOLIS-PA-SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Scenārijs A (Lokāla kļūda pirms publicēšanas):
+Solis 1: Tu izveidoji komitu, bet pamanīji kļūdu tekstā vai aizmirstu failu.
+Solis 2: Izpildi `git reset HEAD~1` (komits pazūd, bet tavs kods paliek neskarts darba mapē).
+Solis 3: Izdari labojumus un izveido jaunu, pareizu komitu: `git add .` un `git commit -m "Precīzs ziņojums"`.
+
+Scenārijs B (Kļūda jau ir nosūtīta uz GitHub un pieejama kolēģiem):
+Solis 1: Pārbaudi komitu vēsturi: `git log --oneline`.
+Solis 2: Atrodi kļūdaino komitu (piemēram, ar ID `c4f1a2d`).
+Solis 3: Izpildi drošo atcelšanu: `git revert c4f1a2d --no-edit`.
+Solis 4: Git izveidos jaunu komitu, kas anulē kļūdu, un visi kolēģi bez problēmām varēs saņemt atjauninājumu.
+
+
+4. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Zelta likums: Nekad neizmanto `git reset --hard` ar komitiem, kas jau ir nosūtīti (pushed) uz GitHub/GitLab! Tas
+sabojās vēsturi un radīs konfliktus komandas biedriem.
+• Drošība ar revert: Ja šaubies, kuru komandu izmantot — vienmēr izvēlies `git revert`. Tā ir 100% droša komanda, kas
+neko neizdzēš no vēstures.
+• Izpratne par apzīmējumiem:
+  - `HEAD` = pats pēdējais (pašreizējais) komits.
+  - `HEAD~1` vai `HEAD^` = viens komits pirms pēdējā (iepriekšējais).
+  - `HEAD~2` vai `HEAD^^` = divi komiti pirms pēdējā.
+• ORIG_HEAD atmiņa: Ja nejauši izpildīji `git reset --hard` un pazaudēji vajadzīgu kodu, Git saglabā iepriekšējo
+pozīciju failā `.git/ORIG_HEAD`. To var ātri atgūt ar `git reset --hard ORIG_HEAD`.
+
+====================================================================================================
