@@ -1,0 +1,95 @@
+====================================================================================================
+07. FAILU UN MAPJU PĀRDĒVĒŠANA UN PĀRVIETOŠANA (GIT MV)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Komanda `git mv` pārdēvē vai pārvieto Git izsekotus failus un vienlaikus atjaunina indeksu jeb sagatavošanas zonu
+(staging area). Izmaiņas uzreiz ir sagatavotas nākamajai izmaiņu fiksācijai (commit), taču vēsturē tās saglabā tikai ar
+`git commit`.
+
+Git pārdēvēšanu atpazīst, salīdzinot failu saturu. Tāpēc failu drīkst pārdēvēt arī redaktorā, Finder vai ar termināļa
+komandu `mv`; pēc tam izmaiņas jāpievieno indeksam.
+
+
+1. FAILA PĀRDĒVĒŠANA:
+----------------------------------------------------------------------------------------------------
+# Pārdēvēt Git izsekotu failu un uzreiz sagatavot izmaiņas komitam:
+git mv page1.html index.html
+
+# Pārbaudīt rezultātu (pārdēvēšana parasti redzama kā "renamed"):
+git status
+
+Alternatīva: pārdēvēšana ar parasto termināļa komandu. Šis ir cits veids, kā izdarīt to pašu; abi varianti nav jāizpilda
+pēc kārtas.
+
+# Pārdēvēt failu darba mapē:
+mv page1.html index.html
+
+# Pievienot indeksam gan vecā ceļa dzēšanu, gan jauno faila ceļu:
+git add -A -- page1.html index.html
+
+
+2. FAILU PĀRVIETOŠANA UN MAPES PĀRDĒVĒŠANA:
+----------------------------------------------------------------------------------------------------
+Tālāk norādītās komandas izpildi projekta saknes mapē. Piemērā `styles.css` un HTML faili jau tiek izsekoti ar Git, bet
+jaunās mapes vēl nepastāv.
+
+# Izveidot mapi CSS failiem:
+mkdir styles
+
+# Pārvietot CSS failu uz šo mapi:
+git mv styles.css styles/
+
+# Pārdēvēt mapi "styles" par "css" (mērķa mape "css" vēl nepastāv):
+git mv styles css
+
+# Izveidot mapi HTML failiem:
+mkdir web-pages
+
+# Pārvietot pašreizējās mapes HTML failus uz jauno mapi:
+git mv *.html web-pages/
+
+Apzīmējums `*.html` atlasa visus pašreizējās mapes failus ar paplašinājumu `.html`. Pirms komandas izpildes
+pārliecinies, ka tie visi ir Git izsekoti un tiešām jāpārvieto.
+
+
+3. PRAKTISKS SOLI PA SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Situācija: projekta saknes mapē ir Git izsekots fails `styles.css`. Tu vēlies pārvietot to uz jaunu mapi `css`. Šis
+piemērs ir izpildāms neatkarīgi no iepriekšējām komandām.
+
+Solis 1: Pārbaudi pašreizējās izmaiņas:
+         git status
+
+Solis 2: Izveido mapi un pārvieto failu:
+         mkdir css
+         git mv styles.css css/
+
+Solis 3: Atjaunini ceļu HTML failos, piemēram:
+         Pirms: <link rel="stylesheet" href="styles.css">
+         Pēc:   <link rel="stylesheet" href="css/styles.css">
+         Ja laboji `index.html`, pievieno arī šīs izmaiņas indeksam:
+         git add index.html
+
+Solis 4: Pārbaudi, vai lapa joprojām ielādē stilus, un apskati sagatavotās izmaiņas:
+         git status
+         git diff --cached
+
+Solis 5: Fiksē izmaiņas vēsturē:
+         git commit -m "Pārvietots CSS fails un atjaunināts stilu ceļš"
+
+
+4. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• `git mv` paredzēts Git izsekotiem failiem. Ja fails vēl nav izsekots (untracked), pārvieto to ar `mv` vai redaktorā un tad pievieno ar `git add`.
+• Pirms pārvietošanas izveido mērķa mapi. Git neglabā tukšas mapes; vēsturē nonāk tajās esošie faili.
+• Ja pārdēvēšanas mērķis jau ir esoša mape, `git mv` pārvietos avotu tajā. Lai pārdēvētu mapi, izmanto vēl neesošu mērķa nosaukumu.
+• Pārvietojot vai pārdēvējot failus, pārbaudi saites, attēlu ceļus un importus. Komanda `git mv` šīs atsauces kodā automātiski neizlabo.
+• Ceļus ar atstarpēm liec pēdiņās, piemēram: git mv "old file.txt" "new file.txt".
+• Pirms `git commit` pārbaudi indeksu: komitā nonāks arī citas jau sagatavotas izmaiņas.
+
+# Atvērt pilno komandas palīdzību:
+git mv --help
+
+====================================================================================================
