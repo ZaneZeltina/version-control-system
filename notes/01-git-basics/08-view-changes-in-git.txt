@@ -1,0 +1,147 @@
+====================================================================================================
+08. IZMAIŅU APSKATE GIT (GIT DIFF UN GIT SHOW)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Komanda `git diff` parāda atšķirības starp darba mapi, indeksu jeb sagatavošanas zonu (staging area) un komitiem
+(commits). Tā palīdz pārbaudīt, kas ir mainīts un ko tu gatavojies fiksēt vēsturē.
+
+Komanda `git show` ļauj apskatīt konkrēta komita informāciju un izmaiņas vai faila saturu noteiktā komitā. Šīs apskates
+komandas nemaina projekta failus.
+
+
+1. PAŠREIZĒJO IZMAIŅU APSKATE:
+----------------------------------------------------------------------------------------------------
+# Salīdzināt darba mapi ar indeksu: izmaiņas, kas vēl nav sagatavotas komitam:
+git diff
+
+# Salīdzināt indeksu ar pēdējo komitu: izmaiņas, kas nonāks nākamajā komitā:
+git diff --staged
+
+# Tas pats, kas `git diff --staged`:
+git diff --cached
+
+# Salīdzināt darba mapes pašreizējo saturu ar pēdējo komitu (HEAD):
+git diff HEAD
+
+# Apskatīt tikai konkrēta faila nesagatavotās izmaiņas:
+git diff -- index.html
+
+Svarīgi: `git diff HEAD` parāda kopējo atšķirību no HEAD, ņemot vērā gan indeksā pievienotās, gan vēl nepievienotās
+izmaiņas. Jaunus, vēl neizsekotus failus (untracked) šīs komandas nerāda; tos vari pamanīt ar `git status`.
+
+
+2. KOMITU UN AGRĀKU FAILU VERSIJU APSKATE:
+----------------------------------------------------------------------------------------------------
+Tālāk redzamie komitu ID ir piemēri. Aizstāj tos ar sava projekta ID, ko vari atrast ar `git log --oneline`.
+
+# Apskatīt pēdējā komita informāciju un tajā veiktās izmaiņas:
+git show
+
+# Apskatīt konkrēta komita informāciju un tajā veiktās izmaiņas:
+git show a1b2c3d
+
+# Salīdzināt iepriekšējo komitu ar pašreizējo komitu:
+git diff HEAD~1 HEAD
+
+# Salīdzināt divu komitu failu stāvokļus (no pirmā uz otro):
+git diff a1b2c3d e4f5a6b
+
+# Šajā `git diff` pierakstā divi punkti dod tādu pašu salīdzinājumu:
+git diff a1b2c3d..e4f5a6b
+
+# Salīdzināt norādīto komitu ar pašreizējo darba mapes saturu:
+git diff a1b2c3d
+
+# Salīdzināt konkrētu failu starp diviem komitiem:
+git diff HEAD~1 HEAD -- css/styles.css
+
+# Parādīt visu faila saturu iepriekšējā komitā:
+git show HEAD~1:css/styles.css
+
+`HEAD` apzīmē pašreizējo komitu, bet `HEAD~1` — tā pirmo vecāku (parastā lineārā vēsturē — iepriekšējo komitu).
+Pierakstā ar kolu faila ceļš jānorāda no repozitorija saknes un tāds, kāds tas bija attiecīgajā komitā.
+
+Svarīga atšķirība: `git diff HEAD~1` salīdzina iepriekšējo komitu ar darba mapi, tāpēc var iekļaut arī vēl nefiksētas
+izmaiņas. Tas nav tas pats, kas `git show`. Savukārt `git show KOMITS:ceļš` rāda faila saturu, nevis atšķirības.
+
+
+3. IZVADES LASĪŠANA UN NODERĪGAS OPCIJAS:
+----------------------------------------------------------------------------------------------------
+Parastā `git diff` izvadē:
+• Rinda ar `-` sākumā ir noņemta no salīdzinājuma sākotnējās versijas.
+• Rinda ar `+` sākumā ir pievienota salīdzinājuma jaunajā versijā.
+• Rindas bez šīm izmaiņu zīmēm palīdz saprast apkārtējo kontekstu.
+• Galvenes `---` un `+++` norāda salīdzināmos failus, bet `@@` — izmaiņu atrašanās vietu.
+
+# Izcelt atšķirības pa vārdiem, nevis tikai pa rindām:
+git diff --word-diff
+
+# Salīdzinājumā ignorēt atstarpju un tabulācijas atšķirības rindās:
+git diff -w
+
+# Ignorēt izmaiņu blokus, kuros visas mainītās rindas ir tukšas:
+git diff --ignore-blank-lines
+
+# Parādīt tikai failu nosaukumus, kas indeksā atšķiras no HEAD:
+git diff --staged --name-only
+
+# Parādīt tikai konkrētajā komitā mainīto failu nosaukumus (bez komita ziņojuma):
+git show --format= --name-only a1b2c3d
+
+# Parādīt īsu sagatavoto izmaiņu statistiku:
+git diff --staged --stat
+
+# Salīdzināt divus failus arī ārpus Git repozitorija:
+git diff --no-index -- index.html page2.html
+
+Opcija `-w` neslēpj tukšās rindas — tā ignorē atstarpju atšķirības. Ja izvadē atveras ritināms skatītājs, pārvietojies
+ar bulttaustiņiem un nospied `q`, lai izietu.
+
+
+4. PRAKTISKS SOLI PA SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Situācija: tu maini virsrakstu jau izsekotā failā `index.html` un vēlies pārbaudīt izmaiņas pirms komita.
+
+Solis 1: Saglabā labojumu redaktorā un pārbaudi failu stāvokli:
+         git status
+
+Solis 2: Apskati, kas tieši mainījies:
+         git diff -- index.html
+
+Solis 3: Pievieno pārbaudītās izmaiņas indeksam:
+         git add index.html
+
+Solis 4: Pārbaudi visu nākamajam komitam sagatavoto saturu:
+         git diff --staged
+         Pēc `git add` parastā `git diff` izvade būs tukša, ja darba mapē nav citu nesagatavotu izmaiņu.
+
+Solis 5: Fiksē izmaiņas un apskati izveidoto komitu:
+         git commit -m "Atjaunināts sākumlapas virsraksts"
+         git show
+
+
+5. VIZUĀLA SALĪDZINĀŠANA UN PADOMI:
+----------------------------------------------------------------------------------------------------
+# Atvērt nesagatavotās izmaiņas ārējā salīdzināšanas rīkā:
+git difftool
+
+# Atvērt sagatavotās izmaiņas ārējā salīdzināšanas rīkā:
+git difftool --staged
+
+`git difftool` izmanto ārēju salīdzināšanas programmu, kurai jābūt pieejamai un vajadzības gadījumā konfigurētai. Bez
+tās vari izmantot parasto `git diff`.
+
+• Tukša `git diff` izvade nenozīmē, ka izmaiņu vispār nav. Pārbaudi arī `git status` un `git diff --staged`.
+• Ja pēc `git add` failu labo vēlreiz, jaunākie labojumi parādīsies `git diff`, bet iepriekš sagatavotie — `git diff
+--staged`.
+• `git diff A B` rāda kopējo atšķirību starp diviem stāvokļiem. Lai apskatītu katru komitu ar tā izmaiņām diapazonā,
+izmanto `git log -p A..B` (A nav iekļauts).
+
+# Atvērt komandu palīdzību:
+git diff --help
+git show --help
+git difftool --help
+
+====================================================================================================
