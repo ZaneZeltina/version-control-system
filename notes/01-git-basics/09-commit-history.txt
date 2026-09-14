@@ -1,0 +1,147 @@
+====================================================================================================
+09. KOMITU VĒSTURES APSKATE (GIT LOG UN GIT SHORTLOG)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Komanda `git log` parāda komitu (commits) vēsturi, sākot no pašreizējā komita (HEAD). Tā palīdz noskaidrot, kas, kad un
+kāpēc projektā mainīts. Vēsturē ir redzami arī komiti no zariem (branches), kas sapludināti pašreizējā zarā.
+
+Komanda `git shortlog` apkopo komitus pēc autoriem. Tā ir noderīga, ja vēlies apskatīt katra autora komitu ziņojumus
+vai komitu skaitu. Abas komandas tikai parāda informāciju un nemaina projekta failus.
+
+
+1. GALVENĀS VĒSTURES APSKATES KOMANDAS:
+----------------------------------------------------------------------------------------------------
+# Apskatīt komitu vēsturi ar identifikatoru (hash), autoru, datumu un ziņojumu:
+git log
+
+# Parādīt katru komitu vienā rindā: saīsināts ID un ziņojuma pirmā rinda:
+git log --oneline
+
+# Parādīt tikai pēdējos četrus komitus:
+git log -4
+
+# Parādīt komitus ar mainīto failu un pievienoto/dzēsto rindu statistiku:
+git log --stat
+
+# Parādīt komitus kopā ar izmaiņu detaļām (patch):
+git log -p
+
+# Apvienot opcijas: pēdējie četri komiti ar statistiku un izmaiņu detaļām:
+git log -4 --stat -p
+
+# Parādīt vēsturi kā grafu, kurā redzamas komitu saites un sazarojumi:
+git log --graph --oneline --decorate
+
+# Iekļaut arī vēsturi no citām lokāli pieejamām atsaucēm, piemēram, zariem un tagiem:
+git log --graph --oneline --decorate --all
+
+Opcija `--decorate` pie komitiem parāda zaru nosaukumus, tagus un citas atsauces. Opcija `--all` pati nelejupielādē
+jaunus datus no GitHub.
+
+
+2. VĒSTURES ATLASE PĒC FAILA, AUTORA UN DATUMA:
+----------------------------------------------------------------------------------------------------
+# Apskatīt konkrēta faila vēsturi:
+git log --oneline -- README.txt
+
+# Sekot viena faila vēsturei arī pirms tā pārdēvēšanas:
+git log --follow --oneline -- README.txt
+
+# Atlasīt komitus pēc autora vārda vai e-pasta:
+git log --author="Janis" --oneline
+
+# Atlasīt komitus noteiktā laika posmā:
+git log --since="2026-09-01 00:00:00" --until="2026-09-07 23:59:59" --oneline
+
+Faila nosaukumu, autora tekstu un datumus aizstāj ar savam projektam atbilstošām vērtībām. Atdalītājs `--` pirms faila
+ceļa palīdz Git atšķirt ceļu no opcijām un komitu vai zaru nosaukumiem.
+
+
+3. PIELĀGOTS IZVADES FORMĀTS:
+----------------------------------------------------------------------------------------------------
+# Pēdējie pieci komiti: saīsināts ID, autors, autora datums un ziņojums:
+git log -5 --pretty=format:"%h - %an - %as - %s"
+
+# Ziņojumu parādīt nākamajā rindā:
+git log -5 --pretty=format:"%h - %an - %as%n  >> %s"
+
+Biežāk izmantotie apzīmējumi:
+• %h — saīsināts komita identifikators.
+• %an — autora vārds.
+• %as — autora datums formātā GGGG-MM-DD.
+• %s — komita ziņojuma pirmā rinda.
+• %n — jauna rinda.
+• %cn — komita izveidotāja (committer) vārds.
+• %cd — komita izveidotāja datums un laiks atbilstoši datuma izvades iestatījumam.
+
+Autors (author) ir cilvēks, kurš sākotnēji sagatavoja izmaiņas. Komita izveidotājs (committer) ir cilvēks, kurš tās
+ierakstīja attiecīgajā komitā. Ikdienā tas bieži ir viens un tas pats cilvēks, bet šī informācija var atšķirties,
+piemēram, pārnesot cita autora izmaiņas.
+
+
+4. KOMITU APKOPOJUMS PĒC AUTORIEM:
+----------------------------------------------------------------------------------------------------
+Šeit norādām `HEAD`, lai skaidri izvēlētos pašreizējā komita vēsturi. Tas ļauj komandai darboties paredzami arī
+skriptos, kur `git shortlog` bez norādīta vēstures sākumpunkta var gaidīt datus no standarta ievades.
+
+# Grupēt komitu ziņojumus pēc autoriem un parādīt katra autora komitu skaitu:
+git shortlog HEAD
+
+# Pie autora vārda parādīt arī e-pastu:
+git shortlog -e HEAD
+
+# Sakārtot autorus pēc komitu skaita, sākot ar lielāko:
+git shortlog -n HEAD
+
+# Parādīt tikai komitu skaitu un autorus, bez komitu ziņojumiem:
+git shortlog -s HEAD
+
+# Apvienot opcijas: skaits, autors un e-pasts, dilstošā secībā:
+git shortlog -sne HEAD
+
+# Apkopot komitus izvēlētā laika posmā:
+git shortlog -sn --since="2026-09-01 00:00:00" --until="2026-09-07 23:59:59" HEAD
+
+Komitu skaits raksturo vēstures ierakstu daudzumu, nevis darba apjomu vai kvalitāti. Pēc noklusējuma `git shortlog`
+grupē komitus pēc autora, nevis komita izveidotāja.
+
+
+5. PRAKTISKS SOLI PA SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Situācija: tu vēlies noskaidrot, kas pēdējā laikā mainīts projekta failā `README.txt`.
+
+Solis 1: Atver termināli sava Git projekta mapē un apskati pēdējos komitus:
+         git log -5 --oneline
+
+Solis 2: Atlasi konkrētā faila vēsturi:
+         git log --oneline -- README.txt
+
+Solis 3: Apskati pēdējās trīs šī faila vēstures izmaiņas:
+         git log -3 -p -- README.txt
+
+Solis 4: Ja vēlies apskatīt visu atrasto komitu, nokopē tā ID:
+         git show a1b2c3d
+         (`a1b2c3d` aizstāj ar īsto komita ID no sava projekta.)
+
+Solis 5: Apskati autoru komitu skaita kopsavilkumu:
+         git shortlog -sn HEAD
+
+
+6. NODERĪGI PADOMI UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+• Ja atveras ritināms skatītājs, pārvietojies ar bulttaustiņiem vai atstarpes taustiņu. Lai izietu, nospied `q`.
+• Opcijās raksti divas parastas defises, piemēram, `--oneline`. Garā domuzīme `–` neder — ar to nokopēta komanda
+nedarbosies pareizi.
+• `git log` rāda fiksēto vēsturi. Vēl nefiksētas izmaiņas pārbaudi ar `git status`, `git diff` un `git diff --staged`.
+• Ja faila vēsture šķiet nepilnīga, pārbaudi ceļu un izmēģini `--follow`. Šī opcija darbojas ar vienu failu, un
+sarežģītas pārdēvēšanas Git ne vienmēr atpazīst.
+• Lai izmēģinātu šīs komandas, pietiek ar savu esošo repozitoriju, kurā ir komiti. Papildu projekta klonēšana nav
+nepieciešama.
+
+# Atvērt komandu palīdzību:
+git log --help
+git shortlog --help
+
+====================================================================================================
