@@ -1,0 +1,133 @@
+====================================================================================================
+10. GIT “LAIKA MAŠĪNA”: PAZUDUŠU KOMITU ATGŪŠANA (GIT REFLOG)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Pēc `git reset`, zaru pārslēgšanas vai vēstures pārveidošanas vajadzīgs komits var vairs nebūt redzams parastajā `git
+log` izvadē. Tas vēl nenozīmē, ka komits uzreiz ir izdzēsts no repozitorija.
+
+Komanda `git reflog` parāda lokālo atsauču izmaiņu žurnālu (reference log). Pēc noklusējuma tā rāda, uz kuriem komitiem
+norādījis HEAD. Šis žurnāls var palīdzēt atrast agrāku stāvokli un atgūt komitu, kamēr tā objekts vēl glabājas
+repozitorijā.
+
+
+1. GALVENĀS APSKATES KOMANDAS:
+----------------------------------------------------------------------------------------------------
+# Apskatīt HEAD pārvietošanās žurnālu:
+git reflog
+
+# Parādīt pēdējos desmit ierakstus:
+git reflog -10
+
+# Parādīt ierakstus ar datumiem:
+git reflog --date=iso
+
+# Apskatīt konkrēta zara žurnālu (aizstāj "main" ar sava zara nosaukumu):
+git reflog show main
+
+# Apskatīt atrastā komita informāciju un izmaiņas:
+git show a1b2c3d
+
+`a1b2c3d` ir piemēra komita identifikators (hash). Komandās izmanto īsto ID no sava repozitorija.
+
+
+2. KĀ LASĪT REFLOG IERAKSTUS:
+----------------------------------------------------------------------------------------------------
+Vienkāršots piemērs pēc atkāpšanās par vienu komitu:
+
+b2c3d4e HEAD@{0}: reset: moving to HEAD~1
+a1b2c3d HEAD@{1}: commit: Pievienota kontaktu lapa
+b2c3d4e HEAD@{2}: commit: Izveidota sākumlapa
+
+• Kreisajā pusē ir komita ID, uz kuru HEAD norādīja pēc konkrētās darbības.
+• HEAD@{0} ir jaunākais žurnāla ieraksts.
+• HEAD@{1} ir iepriekšējais žurnāla ieraksts, nevis obligāti iepriekšējais komits vēsturē.
+• Ieraksta beigās norādīta darbība, piemēram, commit, reset vai checkout.
+
+Šajā piemērā kontaktu lapas komits `a1b2c3d` vairs nav pašreizējā zara galā, bet to vēl var atrast žurnālā.
+
+# Apskatīt stāvokli no iepriekšējā HEAD žurnāla ieraksta:
+git show 'HEAD@{1}'
+
+Pēc jaunām darbībām ierakstu numuri mainās. Kad esi atradis vajadzīgo komitu, turpmākajās komandās izmanto tā ID.
+
+
+3. PRAKTISKS PIEMĒRS: ATGŪT PAZUDUŠU KOMITU:
+----------------------------------------------------------------------------------------------------
+Situācija: pēc kļūdaina `git reset` vajadzīgais komits pazudis no `git log`. Vispirms saglabā atsauci uz atrasto komitu
+atsevišķā zarā (branch).
+
+Solis 1: Pārbaudi darba mapes stāvokli un atrodi vajadzīgo ierakstu:
+         git status
+         git reflog -10
+
+Solis 2: Pārbaudi atrastā komita saturu:
+         git show a1b2c3d
+
+Solis 3: Izveido jaunu zaru, kas norāda uz šo komitu:
+         git branch recovered-work a1b2c3d
+         Šī komanda nepārslēdz zaru un nemaina darba mapes failus.
+         Ja zars `recovered-work` jau pastāv, izvēlies citu nosaukumu.
+
+Solis 4: Pārbaudi atgūtā zara vēsturi:
+         git log -5 --oneline recovered-work
+
+Solis 5: Ja vēlies turpināt darbu atgūtajā zarā, vispirms fiksē vai citādi saglabā nepabeigtās izmaiņas. Pēc tam
+pārslēdzies:
+         git switch recovered-work
+
+Atgūtais komits tagad ir sasniedzams no jaunā zara, ne tikai no reflog ieraksta.
+
+
+4. ATGRIEŠANĀS PIE KOMITA AR GIT RESET:
+----------------------------------------------------------------------------------------------------
+Ja apzināti vēlies pārvietot pašreizējo zaru uz atrasto komitu un aizstāt indeksa un darba mapes stāvokli, iespējams
+izmantot:
+
+git reset --hard a1b2c3d
+
+UZMANĪBU: `--hard` atmet nefiksētas izmaiņas izsekotajos failos un var pārrakstīt arī neizsekotus failus, ja tie traucē
+atjaunot izvēlēto stāvokli. Pirms šīs darbības saglabā vajadzīgo darbu. Atgūšanai vispirms izmanto iepriekš aprakstīto
+jauna zara izveidi.
+
+Reflog nav darba mapes rezerves kopija: tas neatjauno redaktorā rakstītu saturu, kas nekad nav saglabāts Git objektos.
+Nepārraksti koplietota zara vēsturi bez vienošanās ar komandu.
+
+
+5. ŽURNĀLA TĪRĪŠANA UN REPOZITORIJA APKOPE:
+----------------------------------------------------------------------------------------------------
+Komanda `git gc` veic repozitorija apkopi: optimizē objektu glabāšanu un atbilstoši iestatījumiem tīra novecojušos
+datus. Git bieži sāk nepieciešamo apkopi automātiski.
+
+# Manuāli palaist repozitorija apkopi:
+git gc
+
+Reflog ieraksti netiek glabāti mūžīgi. Noklusētie termiņi ir 90 dienas, bet ierakstiem par no pašreizējās zara
+virsotnes nesasniedzamiem komitiem — 30 dienas. Iestatījumi var atšķirties, un tīrīšana notiek apkopes laikā; šie
+termiņi nav garantēts datu atgūšanas periods.
+
+# Tikai apskatīt, kuri ieraksti tiktu noņemti ar septiņu dienu slieksni:
+git reflog expire --expire=7.days.ago --all --dry-run --verbose
+
+Opcija `--dry-run` neko neizdzēš. Noņemot šo opciju, komanda tiešām dzēstu atlasītos žurnāla ierakstus. Tas var
+apgrūtināt komitu atrašanu, un vēlākā apkope var izdzēst arī vairs neaizsargātos objektus. Ikdienas mācībām žurnāls nav
+jātīra.
+
+Ja mēģini atgūt darbu, vispirms atrodi un saglabā vajadzīgo komitu zarā. Pirms tam nepalaid žurnāla tīrīšanu vai
+nevajadzīgu apkopi.
+
+
+6. GIT LOG UN GIT REFLOG ATŠĶIRĪBA:
+----------------------------------------------------------------------------------------------------
+• `git log` rāda komitu vēsturi, kas sasniedzama no izvēlētā sākumpunkta; pēc noklusējuma tas ir HEAD.
+• `git reflog` rāda lokāli reģistrētas atsauču izmaiņas, tostarp HEAD pārvietošanu ar reset un zaru pārslēgšanu. Tas
+nav visu Git komandu vai failu labojumu žurnāls.
+• Reflog netiek pārsūtīts ar push vai clone. Citā datorā vai jaunā klonā šī lokālā žurnāla nebūs.
+• `git log` izmanto darba vēstures apskatei, bet `git reflog` — agrāku lokālo pozīciju meklēšanai.
+
+# Atvērt komandu palīdzību:
+git reflog --help
+git gc --help
+
+====================================================================================================
