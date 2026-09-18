@@ -1,0 +1,210 @@
+====================================================================================================
+11. FAILU UN MAPJU IGNORĒŠANA (GITIGNORE)
+====================================================================================================
+
+ĪSS SKAIDROJUMS:
+----------------------------------------------------------------------------------------------------
+Fails `.gitignore` nosaka, kurus vēl neizsekotos failus un mapes Git pēc noklusējuma nerāda parastajā `git status`
+izvadē un nepievieno ar `git add .`. Tā var izslēgt, piemēram, žurnālfailus (log files), pagaidu failus un automātiski
+izveidotas projekta mapes.
+
+Svarīgi: `.gitignore` neaptur jau izsekotu failu izsekošanu un neko neizdzēš no diska. Pašu `.gitignore` parasti
+pievieno repozitorijam, lai projekta noteikumi būtu pieejami arī citiem.
+
+
+1. FAILA .GITIGNORE IZVEIDE:
+----------------------------------------------------------------------------------------------------
+Projekta saknes mapē izveido teksta failu ar precīzu nosaukumu `.gitignore` — ar punktu sākumā un bez paplašinājuma `.txt`. To vari izdarīt redaktorā vai terminālī:
+
+nano .gitignore
+
+Katrā rindā ieraksti vienu faila nosaukumu vai paraugu (pattern). Piemēram, šāda rinda ignorē failus ar nosaukumu `events.log`:
+
+events.log
+
+Šī rinda ir `.gitignore` saturs, nevis termināļa komanda. Nano redaktorā saglabā ar Ctrl+O, apstiprini ar Enter un izej ar Ctrl+X.
+
+
+2. BIEŽĀK IZMANTOTIE PARAUGI:
+----------------------------------------------------------------------------------------------------
+Tālāk redzamās rindas paredzētas `.gitignore` failam projekta saknē. Izvēlies savam projektam vajadzīgos noteikumus.
+
+# Ignorēt visus failus ar paplašinājumu .log:
+*.log
+
+# Jautājuma zīme aizstāj tieši vienu rakstzīmi (piem., temp1.txt vai tempA.txt):
+temp?.txt
+
+# Ignorēt mapes ar nosaukumu logs un visu to saturu:
+logs/
+
+# Ignorēt tikai projekta saknē esošo mapi logs:
+/logs/
+
+# Ignorēt tikai projekta saknē esošo failu events.log:
+/events.log
+
+# Ignorēt cache mapes dažādos projekta dziļumos:
+**/cache/
+
+• `*` aizstāj jebkādu rakstzīmju skaitu, bet nepāriet pāri mapes atdalītājam `/`.
+• `?` aizstāj vienu rakstzīmi, izņemot `/`.
+• `**` īpašās kombinācijās ar `/` ļauj aptvert vairākus mapju līmeņus.
+• `/` rindas beigās norāda, ka noteikums attiecas uz mapi.
+• `/` sākumā piesaista ceļu mapei, kurā atrodas attiecīgais `.gitignore`.
+• Rinda, kas sākas ar `#`, ir komentārs. Tukšas rindas var izmantot pārskatāmībai.
+
+
+3. IZŅĒMUMI AR IZSAUKUMA ZĪMI:
+----------------------------------------------------------------------------------------------------
+Lai ignorētu visus `.log` failus, izņemot vienu mācību piemēra failu projekta saknē, ieraksti:
+
+*.log
+!/sample.log
+
+Izņēmumu raksti pēc vispārīgā noteikuma. Vienā `.gitignore` failā pēdējais atbilstošais noteikums nosaka rezultātu. `!`
+tikai atceļ ignorēšanu — failu joprojām jāpievieno ar `git add`.
+
+Ja ignorēta pati mape ar `logs/`, ar `!logs/sample.log` vien nepietiek, jo Git neapskata ignorētās mapes saturu. Lai
+ignorētu mapes saturu, bet atļautu vienu failu, izmanto šādu atsevišķu variantu:
+
+/logs/*
+!/logs/sample.log
+
+Šajā variantā neiekļauj arī noteikumu `/logs/` vai `logs/`, kas ignorētu visu vecākmapi.
+
+
+4. PRAKTISKS SOLI PA SOLIM PIEMĒRS:
+----------------------------------------------------------------------------------------------------
+Situācija: projektā veidojas nevajadzīgi `.log` faili, bet vienu nekaitīgu piemēra failu `sample.log` vēlies saglabāt
+vēsturē. Komandas izpildi projekta saknes mapē; piemēra faili vēl netiek izsekoti.
+
+Solis 1: Izveido divus tukšus piemēra failus un pārbaudi stāvokli:
+         touch events.log sample.log
+         git status
+
+Solis 2: Atver vai izveido `.gitignore` un pievieno šīs divas rindas, saglabājot esošos vajadzīgos noteikumus:
+         *.log
+         !/sample.log
+
+Solis 3: Pārbaudi rezultātu:
+         git status
+         `events.log` vairs nebūs parastajā izvadē, bet `sample.log` būs pieejams pievienošanai.
+
+Solis 4: Pievieno tikai šī piemēra vajadzīgos failus indeksam:
+         git add .gitignore sample.log
+         git diff --staged
+
+Solis 5: Izveido jaunu komitu (commit):
+         git commit -m "Pievienoti žurnālfailu ignorēšanas noteikumi"
+
+
+5. JA FAILS JAU TIEK IZSEKOTS:
+----------------------------------------------------------------------------------------------------
+Ja `events.log` jau ir repozitorijā, tā ierakstīšana `.gitignore` neaptur izsekošanu. Lai turpmāk to neiekļautu komitos:
+
+# Vispirms pievieno atbilstošu noteikumu .gitignore failā.
+# Pēc tam izņem konkrēto failu no indeksa, saglabājot to darba mapē:
+git rm --cached -- events.log
+
+# Pievieno ignorēšanas noteikumus un pārbaudi sagatavotās izmaiņas:
+git add .gitignore
+git status
+git diff --staged
+
+# Fiksē izsekošanas pārtraukšanu:
+git commit -m "Pārtraukta žurnālfaila izsekošana"
+
+Opcija `--cached` šīs komandas izpildes laikā atstāj failu tavā diskā. Komitā tiek fiksēta tā noņemšana no
+repozitorija; faila iepriekšējās versijas paliek vēsturē. Kolēģiem, saņemot šo komitu, attiecīgais izsekotais fails var
+tikt noņemts no darba mapes.
+
+
+6. IGNORĒTA FAILA PIESPIEDU PIEVIENOŠANA:
+----------------------------------------------------------------------------------------------------
+Retos gadījumos ignorētu failu tomēr vajag iekļaut repozitorijā. Opcija `-f` (force) ļauj to pievienot indeksam,
+neizmainot ignorēšanas noteikumus. Piemērā `.gitignore` jau satur noteikumu `*.log`.
+
+# Izveidot tukšu mācību piemēra failu:
+touch debug.log
+
+# Pievienot šo konkrēto failu, neņemot vērā ignorēšanu:
+git add -f -- debug.log
+
+# Pārbaudīt sagatavotās izmaiņas un izveidot komitu:
+git status
+git diff --staged
+git commit -m "Pievienots žurnālfaila piemērs"
+
+Pēc pievienošanas Git failu izseko. Turpmāk tā izmaiņas vairs neslēps noteikums `*.log`, un atkārtoti lietot `-f`
+nebūs nepieciešams. Ja izņēmumam jābūt redzamam arī projekta noteikumos, izmanto iepriekš aprakstīto pierakstu ar `!`.
+Pirms īsta žurnālfaila pievienošanas pārbaudi, vai tajā nav paroļu, piekļuves atslēgu vai citu privātu datu.
+
+
+7. GLOBĀLIE IGNORĒŠANAS NOTEIKUMI:
+----------------------------------------------------------------------------------------------------
+Personīgos ignorēšanas noteikumus vari glabāt vienā failā un izmantot vairākos sava datora repozitorijos.
+Tas noder, piemēram, pagaidu failiem, kurus rada tavi rīki. Šie noteikumi netiek nosūtīti kolēģiem ar komitiem.
+
+# Vispirms pārbaudīt, vai globālais faila ceļš jau ir iestatīts:
+git config --global --get core.excludesFile
+
+Ja komanda parāda ceļu, papildini jau norādīto failu. Ja iestatījuma nav, vari izveidot un norādīt savu failu:
+
+# Izveidot failu (touch neizdzēš saturu, ja fails jau pastāv):
+touch ~/.gitignore_global
+
+# Norādīt Git šī faila atrašanās vietu:
+git config --global core.excludesFile ~/.gitignore_global
+
+# Atvērt failu redaktorā:
+nano ~/.gitignore_global
+
+Pievieno tajā šādu rindu bez atkāpes un saglabā failu:
+
+*.tmp
+
+# Savā mācību repozitorijā izveidot vēl neizsekotu piemēra failu:
+touch tempfile.tmp
+
+# Pārbaudīt, ka fails tiek ignorēts, un noskaidrot piemēroto noteikumu:
+git status
+git check-ignore -v -- tempfile.tmp
+
+`tempfile.tmp` neparādīsies kā jauns fails parastajā `git status` izvadē. Ja tas jau tiek izsekots vai projekta
+noteikumos ir atbilstošs izņēmums, rezultāts var atšķirties.
+
+Ņem vērā: iestatot citu `core.excludesFile` ceļu, tu aizstāj iepriekš izmantoto ceļu, nevis pievieno vēl vienu.
+Arī bez šī iestatījuma Git var izmantot noklusēto globālo failu `$XDG_CONFIG_HOME/git/ignore` vai, ja šis vides
+mainīgais nav iestatīts vai ir tukšs, `~/.config/git/ignore`. Saglabā arī tur esošos vajadzīgos noteikumus.
+
+Kuru vietu izvēlēties?
+• `.gitignore` — kopīgiem projekta noteikumiem; šo failu pievieno komitam.
+• `.git/info/exclude` — tikai saviem noteikumiem vienā lokālajā repozitorijā.
+• Globālais ignorēšanas fails — saviem noteikumiem vairākos repozitorijos; nosaukums `.gitignore_global` ir izvēle,
+  nevis obligāts nosaukums. Git to atrod pēc `core.excludesFile` iestatījuma.
+
+
+8. PĀRBAUDES UN BIEŽĀKĀS KĻŪDAS:
+----------------------------------------------------------------------------------------------------
+# Parādīt arī ignorētos failus un mapes:
+git status --ignored
+
+# Noskaidrot, kurš noteikums attiecas uz konkrēto failu:
+git check-ignore -v -- events.log
+
+# Pārbaudīt, vai fails jau ir indeksā un tiek izsekots:
+git ls-files -- events.log
+
+• `.gitignore` noteikumu sākumā neliec atkāpes: sākuma atstarpes var kļūt par daļu no parauga.
+• Ignorēšana nav slepenas informācijas dzēšana. Ja parole vai cita slepena vērtība jau nonākusi komitā, `.gitignore` to
+neizņems no vēstures.
+• Parastām noteikumu izmaiņām veido jaunu komitu. `git commit --amend --no-edit` aizstāj pēdējo komitu un maina tā ID;
+to izmanto tikai apzinātai sava vēl nepublicēta komita labošanai.
+• Ja maini tikai savus lokālos ignorēšanas noteikumus, vari tos ierakstīt `.git/info/exclude`. Šis fails netiek
+koplietots ar projekta komitiem.
+
+# Atvērt ignorēšanas noteikumu palīdzību:
+git help gitignore
+
+====================================================================================================
